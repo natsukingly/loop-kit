@@ -40,11 +40,11 @@ Claude Code の `/loop`・`/schedule` で動かします。依存ゼロ（Node.j
 git clone https://github.com/natsukingly/loop-kit.git
 cd loop-kit
 
-# 1) いまは “赤” から始まる（送料機能 shippingFee が未実装）
-node --test        # → shipping のテストが fail するのが正しい状態
+# 1) いまは “赤” から始まる（コスト見積もり estimateCost が未実装）
+node --test        # → cost のテストが fail するのが正しい状態
 
 # 2) サンプル Issue を立てる（受け入れ条件は examples/sample-issue.md）
-gh issue create --label loop --title "feat: 送料を計算する shippingFee を追加" \
+gh issue create --label loop --title "feat: LLM のコストを見積もる estimateCost を追加" \
   --body-file examples/sample-issue.md
 
 # 3) ループを回す（どちらでも可）
@@ -54,7 +54,7 @@ bash loop.sh 1
 #     /loop skill issue-to-pr で open な loop Issue を1件片付けて
 #  無人運用にするなら /schedule で毎朝起動（下記）
 
-# 4) 緑になったら src/shipping.js ができて、Draft PR が立つ
+# 4) 緑になったら src/cost.js ができて、Draft PR が立つ
 node --test        # → 全部 pass
 ```
 
@@ -62,15 +62,17 @@ node --test        # → 全部 pass
 
 ## 受け入れ条件（＝ゲート）はテストで表す
 
-`test/shipping.test.js` が「やってほしいこと」の定義そのものです。ループはこれを**1 文字も変えません**。
+`test/cost.test.js` が「やってほしいこと」の定義そのものです。ループはこれを**1 文字も変えません**。
 
 | Given | When | Then |
 |---|---|---|
-| 小計 3,980 円未満 | `shippingFee(小計)` | `500` |
-| 小計 3,980 円以上 | `shippingFee(小計)` | `0` |
-| 小計が負 | `shippingFee(小計)` | 例外 |
+| 入力1000 / 出力500 / `haiku` | `estimateCost(...)` | `0.0035` |
+| 入力1000 / 出力500 / `sonnet` | `estimateCost(...)` | `0.0105` |
+| `0, 0, "haiku"` | `estimateCost(...)` | `0` |
+| 未知モデル / 負のトークン | `estimateCost(...)` | 例外 |
 
 数値で判定できる＝無人でも合否がブレない。これが「Loop に載せていいタスク」の条件です。
+（料金は `src/pricing.js` の例値。最新の実価格は各プロバイダ公式で確認してください）
 
 ---
 
