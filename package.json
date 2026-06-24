@@ -1,0 +1,11 @@
+{
+  "name": "loop-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Issue→Draft PR を無人で回す、最小の Loop Engineering キット(Claude Code 用)",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
